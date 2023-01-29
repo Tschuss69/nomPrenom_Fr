@@ -39,6 +39,8 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY --link docker/php/conf.d/app.ini $PHP_INI_DIR/conf.d/
 COPY --link docker/php/conf.d/app.prod.ini $PHP_INI_DIR/conf.d/
 
+RUN sed -E -i -e 's/memory_limit = 128M/memory_limit = -1/' $PHP_INI_DIR/php.ini
+
 COPY --link docker/php/php-fpm.d/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 RUN mkdir -p /var/run/php
 
@@ -92,6 +94,7 @@ RUN set -eux; \
 	install-php-extensions xdebug
 
 RUN rm -f .env.local.php
+
 
 # Build Caddy with the Mercure and Vulcain modules
 FROM caddy:2-builder-alpine AS app_caddy_builder
